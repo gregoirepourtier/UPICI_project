@@ -1,0 +1,115 @@
+\documentclass[a4paper,11pt,twoside]{article}
+
+\usepackage[french]{babel}  % Pour le français
+\usepackage[utf8]{inputenc} % Pour taper les caractères accentués
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath}  % Ces trois paquets donnent accès à 
+\usepackage{amsfonts} % des symboles et formulations
+\usepackage{amstext}  % mathématiques
+\usepackage{hyperref} % Permet de faire automatiquement des liens dans les
+                      % documents
+\usepackage{booktabs}
+\usepackage{graphicx} % Permet d'insérer des images
+\DeclareGraphicsExtensions{.png} % Mettre ici la liste des extensions des
+                                 % fichiers images
+
+% On peut choisir la police en utilisant un paquet 
+%\usepackage{newcent}
+\usepackage{lmodern}
+%\usepackage{cmbright} % Computer Modern Bright
+
+% Une des nombreuses manière de modifier les marges par défaut
+\usepackage{geometry}
+\geometry{vmargin=2cm,hmargin=2.5cm,nohead}
+
+% On peut redéfinir certaines longueurs, par exemple l'espacement entre
+% les paragraphes -- ce n'est pas une bonne idée, d'un point de vue
+% typographique.
+% \setlength{\parskip}{0.25cm}
+
+% Quelques définitions 
+\def \rr {{\mathbb R}} % L'ensemble R
+\def \cc {{\mathbb C}} % L'ensemble C
+\def \nn {{\mathbb N}} % L'ensemble N
+\def \zz {{\mathbb Z}} % L'ensemble Z
+
+% Les informations de la page de titre (page de titre séparée pour un 'report').
+\title{Brefs rappels de formules de quadrature}
+\author{
+  Yves Coudière\\\href{mailto:yves.coudiere@u-bordeaux.fr}{\small\tt yves.coudiere@u-bordeaux.fr}
+}
+\date{\today} % \today pour la date courante 
+
+\begin{document}
+
+\maketitle % Page de titre automatique à partir des infos ci-dessus
+
+\subsection*{Formules élémentaires}
+Ce sont les formules de quadrature, notées génériquement $Qf$ d'une
+fonction $f$ définie sur un intervalle de référence
+$[\alpha,\beta]$. Ces formules servent à calculer une approximation de
+l'intégrale $If = \int_\alpha^\beta f(t) dt$. Elles ont la forme
+générale $Qf = \sum_{k=1}^m \omega_kf(t_k)$ où $\omega_k\in\rr$ et
+$\alpha\le t_k \le \beta$ sont les poids et les points
+d'interpolation. Voir des exemples dans le tableau~\ref{tab:quad}.
+\begin{table}
+  \centering
+  \begin{tabular}{llllll}\toprule
+    Formule & $\alpha,\beta$ & $m$ & $\omega_i$ & $t_i$ & $p$ \\
+    \midrule
+    trapèzes     &  0,1 & 2 & $\frac12,\frac12$ & 0,1 & 1 \\
+    Simpson      & -1,1 & 3 & $\frac13,\frac43,\frac13$ & -1,0,1 & 3
+    \\
+    point milieu & -1,1 & 1 & 2                   & 0   & 1 \\
+    Gauss-Legendre 2 & -1,1 & 2 & 1,1 & $-\frac{\sqrt{3}}3,
+                                        -\frac{\sqrt{3}}3$ & 3 \\
+    Gauss-Legendre 3 & -1,1 & 3 & $\frac59,\frac89,\frac59$ &
+                                                                  $-\frac{\sqrt{15}}5,0,\frac{\sqrt{15}}5$
+                                                        & 5 
+    \\ \bottomrule
+  \end{tabular}
+  \caption{Quadratures classiques.}
+  \label{tab:quad}
+\end{table}
+
+Ces formules sont caractérisées par le degré maximal $p$ des polynomes
+intégrés exactement, c'est à dire pour lesquels on a $If = Qf$.
+
+
+\subsection*{Formules composées}
+Ce sont les formules obtenues en composant les formules élémentaires sur
+un découpage de l'intervalle $[a,b]$ en $n$ sous-intervalles de même
+longueur $h = \frac{b-a}n$. On procède de la manière suivante (découpage
+de $[a,b]$ en $n$ sous-intervalles, puis changement de variable
+$x = a+ih+h\frac{t-\alpha}{\beta-\alpha}$ pour ramener
+$x \in [a+ih, a+(i+1)h]$ sur $t \in [\alpha,\beta]$ -- dans chaque
+sous-intervalle):
+\begin{multline*}
+  \int_a^b f(x)dx = \sum_{i=0}^{n-1} \int_{a+ih}^{a+(i+1)h} f(x)dx =
+  \sum_{i=0}^{n-1} \frac{h}{\beta-\alpha} \int_\alpha^\beta f\left(
+    a+ih+h\frac{t-\alpha}{\beta-\alpha} \right) dt \\ =
+  \frac{h}{\beta-\alpha} \sum_{i=0}^{n-1} \int_\alpha^\beta g_i(t)dt,
+\end{multline*}
+où $g_i(t) = f\left( a+ih+h\frac{t-\alpha}{\beta-\alpha} \right)$. On
+applique alors une formule de quadrature élémentaire à la fonction $g_i$
+sur l'intervalle de référence $[\alpha,\beta]$, et l'on trouve la
+formule composée
+\begin{equation*}
+  Q_nf = \frac{h}{\beta-\alpha} \sum_{i=0}^{n-1} \sum_{k=1}^m \omega_k
+  f\left( a+ih+h\frac{t_k-\alpha}{\beta-\alpha} \right).
+\end{equation*}
+On trouve par exemple,
+\begin{itemize}
+\item pour la formule des trapèzes,
+  $Q_nf = h\sum_{i=0}^{n-1} \frac12\left( f(a+ih)+f(a+(i+1)h) \right)$,
+\item pour la formule du point milieu,
+  $Q_nf = \frac{h}2 \sum_{i=0}^{n-1} 2f(a+(i+0.5)h)$,
+\item pour la formule de Simpson,
+
+  $Q_nf = \frac{h}2 \sum_{i=0}^{n-1} \frac13\left( f(a+ih) +
+    4f(a+(i+0.5h)) + f(a+(i+1)h) \right)$,
+\item etc.
+\end{itemize}
+
+\end{document}
